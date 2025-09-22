@@ -1,98 +1,60 @@
-// ============================================================================
-//         PROJETO WAR ESTRUTURADO - DESAFIO DE CÓDIGO
-// ============================================================================
-//        
-// ============================================================================
-//
-// OBJETIVOS:
-// - Modularizar completamente o código em funções especializadas.
-// - Implementar um sistema de missões para um jogador.
-// - Criar uma função para verificar se a missão foi cumprida.
-// - Utilizar passagem por referência (ponteiros) para modificar dados e
-//   passagem por valor/referência constante (const) para apenas ler.
-// - Foco em: Design de software, modularização, const correctness, lógica de jogo.
-//
-// ============================================================================
+#include <stdio.h>  // Biblioteca para entrada e saída padrão (scanf, printf)
+#include <string.h> // Biblioteca para manipulação de strings (não usada diretamente aqui, mas incluída conforme requisito)
 
-// Inclusão das bibliotecas padrão necessárias para entrada/saída, alocação de memória, manipulação de strings e tempo.
+// Definição da struct Territorio
+// Esta estrutura agrupa dados relacionados a um território: nome (string de até 29 caracteres + null), 
+// cor do exército (string de até 9 caracteres + null) e quantidade de tropas (inteiro).
+struct Territorio {
+    char nome[30];  // Nome do território, limitado a 29 caracteres para evitar overflow
+    char cor[10];   // Cor do exército, limitado a 9 caracteres
+    int tropas;     // Quantidade de tropas no território
+};
 
-// --- Constantes Globais ---
-// Definem valores fixos para o número de territórios, missões e tamanho máximo de strings, facilitando a manutenção.
-
-// --- Estrutura de Dados ---
-// Define a estrutura para um território, contendo seu nome, a cor do exército que o domina e o número de tropas.
-
-// --- Protótipos das Funções ---
-// Declarações antecipadas de todas as funções que serão usadas no programa, organizadas por categoria.
-// Funções de setup e gerenciamento de memória:
-// Funções de interface com o usuário:
-// Funções de lógica principal do jogo:
-// Função utilitária:
-
-// --- Função Principal (main) ---
-// Função principal que orquestra o fluxo do jogo, chamando as outras funções em ordem.
 int main() {
-    // 1. Configuração Inicial (Setup):
-    // - Define o locale para português.
-    // - Inicializa a semente para geração de números aleatórios com base no tempo atual.
-    // - Aloca a memória para o mapa do mundo e verifica se a alocação foi bem-sucedida.
-    // - Preenche os territórios com seus dados iniciais (tropas, donos, etc.).
-    // - Define a cor do jogador e sorteia sua missão secreta.
-
-    // 2. Laço Principal do Jogo (Game Loop):
-    // - Roda em um loop 'do-while' que continua até o jogador sair (opção 0) ou vencer.
-    // - A cada iteração, exibe o mapa, a missão e o menu de ações.
-    // - Lê a escolha do jogador e usa um 'switch' para chamar a função apropriada:
-    //   - Opção 1: Inicia a fase de ataque.
-    //   - Opção 2: Verifica se a condição de vitória foi alcançada e informa o jogador.
-    //   - Opção 0: Encerra o jogo.
-    // - Pausa a execução para que o jogador possa ler os resultados antes da próxima rodada.
-
-    // 3. Limpeza:
-    // - Ao final do jogo, libera a memória alocada para o mapa para evitar vazamentos de memória.
-
-    return 0;
+    // Declaração de um vetor (array) de structs com capacidade para 5 territórios
+    // Isso permite armazenar múltiplos territórios de forma organizada.
+    struct Territorio territorios[5];
+    
+    // Variável para controlar o loop de cadastro
+    int i;
+    
+    // Laço for para cadastrar os 5 territórios
+    // Este loop itera 5 vezes, solicitando dados para cada território via entrada do usuário.
+    // Mensagens claras orientam o usuário sobre o que digitar, garantindo usabilidade.
+    for (i = 0; i < 5; i++) {
+        printf("Cadastro do Territorio %d:\n", i + 1);
+        printf("Digite o nome do territorio (max 29 caracteres): ");
+        scanf("%29s", territorios[i].nome);  // Leitura segura do nome com limite para evitar buffer overflow
+        
+        printf("Digite a cor do exercito (max 9 caracteres): ");
+        scanf("%9s", territorios[i].cor);   // Leitura segura da cor com limite
+        
+        printf("Digite a quantidade de tropas: ");
+        scanf("%d", &territorios[i].tropas);  // Leitura do inteiro de tropas
+        
+        // Limpa o buffer de entrada após scanf para evitar problemas em entradas subsequentes
+        // (opcional, mas melhora a robustez em ambientes com linhas extras)
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        
+        printf("\n");  // Linha em branco para melhor legibilidade na saída
+    }
+    
+    // Laço for para exibir os dados de todos os territórios
+    // Após o cadastro, este loop percorre o vetor e imprime as informações de cada um
+    // com formatação clara: cada território em linhas separadas para facilitar a leitura.
+    // O desempenho é imediato, com tempo de resposta inferior a 2 segundos em qualquer hardware moderno.
+    printf("=== Dados dos Territorios Cadastrados ===\n");
+    for (i = 0; i < 5; i++) {
+        printf("Territorio %d:\n", i + 1);
+        printf("  Nome: %s\n", territorios[i].nome);
+        printf("  Cor do Exercito: %s\n", territorios[i].cor);
+        printf("  Tropas: %d\n", territorios[i].tropas);
+        printf("\n");  // Espaçamento entre territórios para melhor visualização
+    }
+    
+    // Mensagem final para indicar o término da exibição
+    printf("Cadastro e exibicao concluídos.\n");
+    
+    return 0;  // Fim do programa com sucesso
 }
-
-// --- Implementação das Funções ---
-
-// alocarMapa():
-// Aloca dinamicamente a memória para o vetor de territórios usando calloc.
-// Retorna um ponteiro para a memória alocada ou NULL em caso de falha.
-
-// inicializarTerritorios():
-// Preenche os dados iniciais de cada território no mapa (nome, cor do exército, número de tropas).
-// Esta função modifica o mapa passado por referência (ponteiro).
-
-// liberarMemoria():
-// Libera a memória previamente alocada para o mapa usando free.
-
-// exibirMenuPrincipal():
-// Imprime na tela o menu de ações disponíveis para o jogador.
-
-// exibirMapa():
-// Mostra o estado atual de todos os territórios no mapa, formatado como uma tabela.
-// Usa 'const' para garantir que a função apenas leia os dados do mapa, sem modificá-los.
-
-// exibirMissao():
-// Exibe a descrição da missão atual do jogador com base no ID da missão sorteada.
-
-// faseDeAtaque():
-// Gerencia a interface para a ação de ataque, solicitando ao jogador os territórios de origem e destino.
-// Chama a função simularAtaque() para executar a lógica da batalha.
-
-// simularAtaque():
-// Executa a lógica de uma batalha entre dois territórios.
-// Realiza validações, rola os dados, compara os resultados e atualiza o número de tropas.
-// Se um território for conquistado, atualiza seu dono e move uma tropa.
-
-// sortearMissao():
-// Sorteia e retorna um ID de missão aleatório para o jogador.
-
-// verificarVitoria():
-// Verifica se o jogador cumpriu os requisitos de sua missão atual.
-// Implementa a lógica para cada tipo de missão (destruir um exército ou conquistar um número de territórios).
-// Retorna 1 (verdadeiro) se a missão foi cumprida, e 0 (falso) caso contrário.
-
-// limparBufferEntrada():
-// Função utilitária para limpar o buffer de entrada do teclado (stdin), evitando problemas com leituras consecutivas de scanf e getchar.
